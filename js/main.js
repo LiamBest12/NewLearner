@@ -13,7 +13,7 @@ document.addEventListener('DOMContentLoaded', (event) => {
     const move = game.move({
       from: source,
       to: target,
-      promotion: 'q' // promote to queen for simplicity
+      promotion: 'q'
     });
 
     if (move === null) return 'snapback';
@@ -27,8 +27,6 @@ document.addEventListener('DOMContentLoaded', (event) => {
     if (currentTurn === 'black') {
       useStockfish();
     }
-    console.log(game.game_over());
-
   }
 
   function updateBoard() {
@@ -42,11 +40,11 @@ document.addEventListener('DOMContentLoaded', (event) => {
 
 
   /*-------------------------------------------------------------------------------------*/
+  //Stockfish
 
   function initializeStockfish() {
-    stockfish = new Worker("js/stockfish/stockfish.js"); // Assign it to the global variable
+    stockfish = new Worker("js/stockfish/stockfish.js"); 
 
-    // Send UCI commands to configure Stockfish
     stockfish.postMessage("uci");
     stockfish.postMessage("setoption name Threads value 4");
     stockfish.postMessage("setoption name Hash value 1024");
@@ -61,9 +59,9 @@ document.addEventListener('DOMContentLoaded', (event) => {
       return;
     }
 
-    const fen = game.fen(); // Assuming `game.fen()` provides a valid FEN string
+    const fen = game.fen();
     stockfish.postMessage(`position fen ${fen}`);
-    stockfish.postMessage("setoption name Skill Level value 1");
+    stockfish.postMessage("setoption name Skill Level value 10");
     stockfish.postMessage("go depth 15");
 
 
@@ -73,14 +71,10 @@ document.addEventListener('DOMContentLoaded', (event) => {
       const bestMove = message.split(' ')[1];
       const from = bestMove.slice(0, 2);
       const to = bestMove.slice(2, 4);
-      console.log(`From: ${from}, To: ${to}`);
-      console.log(game.game_over());
       game.move({ from, to, promotion: 'q' });
       board.position(game.fen(), true);
       if (game.game_over()) {
         alert('Game Over');
-        console.log('Game Over');
-
       }
       currentTurn = 'white';
       }
