@@ -1,1 +1,1 @@
-Basic code using stockfish to play a chess game.
+Basic code using stockfish to play a chess game. (WIP)  
